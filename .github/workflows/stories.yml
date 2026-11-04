@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "40 10 * * *"        # taeglich 11:40 Winterzeit / 12:40 Sommerzeit
   workflow_dispatch:             # Knopf zum Selberstarten
+    inputs:
+      kunde:
+        description: "Nur fuer diesen Kunden posten (leer = alle)"
+        required: false
+        default: ""
 
 concurrency: posten               # nie zwei Laeufe gleichzeitig
 
@@ -25,7 +30,8 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: python skripte/run.py --kunde ${{ matrix.kunde }} --typ story
+      - if: ${{ inputs.kunde == '' || inputs.kunde == matrix.kunde }}
+        run: python skripte/run.py --kunde ${{ matrix.kunde }} --typ story
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOOGLE_DIENSTKONTO: ${{ secrets.GOOGLE_DIENSTKONTO }}
