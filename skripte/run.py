@@ -23,6 +23,8 @@ import subprocess
 import sys
 import zoneinfo
 
+import requests
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import render
 import render_doenerfabriq
@@ -124,6 +126,93 @@ def erinnerung(kunde, offen):
                   timeout=30)
 
 
+def zustand_pfad(kunde):
+    return os.path.join(BASIS, "kunden", kunde, "verwendet.json")
+
+
+def lade_zustand(kunde):
+    p = zustand_pfad(kunde)
+    if os.path.exists(p):
+        with open(p, encoding="utf-8") as f:
+            return json.load(f)
+    return {"fotos": [], "zaehler": 0}
+
+
+def speichere_zustand(kunde, z):
+    with open(zustand_pfad(kunde), "w", encoding="utf-8") as f:
+        json.dump(z, f, ensure_ascii=False, indent=2)
+        f.write("\n")
+
+
+def automatik(kunde, marke, tag):
+    """Baut einen Eintrag aus einem frischen Drive-Foto und dem Textpool.
+
+    So muss niemand einen Plan pflegen: Fotos in den Drive-Ordner legen reicht.
+    """
+    import drive
+    ordner = marke.get("drive_ordner") or []
+    if not ordner:
+        print(f"{kunde}: keine Drive-Ordner in marke.json hinterlegt.")
+        return None, None
+
+    with open(os.path.join(BASIS, "kunden", kunde, "texte.json"), encoding="utf-8") as f:
+        pool = json.load(f)
+
+    z = lade_zustand(kunde)
+    token = drive._token()
+    alle = drive.fotos(ordner, token)
+    if not alle:
+        print(f"{kunde}: in den Drive-Ordnern liegen keine Bilder.")
+        return None, None
+
+    offen = [f for f in alle if f["id"] not in z["fotos"]]
+    if not offen:
+        # Alle schon einmal dran gewesen: Runde zuruecksetzen und Bescheid geben.
+        print(f"{kunde}: alle {len(alle)} Drive-Fotos waren schon dran - beginne von vorn.")
+        erinnerung_fotos(kunde, len(alle))
+        z["fotos"] = []
+        offen = alle
+
+    foto = offen[0]
+    ziel = os.path.join(BASIS, "kunden", kunde, "fotos", "_automatik.jpg")
+    os.makedirs(os.path.dirname(ziel), exist_ok=True)
+    drive.hole(foto["id"], ziel, token)
+    print(f"aus Drive geholt: {foto['name']}")
+
+    takt = pool.get("anteil_reine_fotos", 3)
+    texte = pool["texte"]
+    nr = z["zaehler"]
+    reines_foto = takt and (nr + 1) % takt == 0
+
+    eintrag = {"datum": tag.isoformat(), "typ": "foto" if reines_foto else "story",
+               "foto": "_automatik.jpg", "bias_y": 0.5, "quelle": foto["name"]}
+    if not reines_foto:
+        eintrag.update(texte[nr % len(texte)])
+    z["_foto_id"] = foto["id"]
+    return eintrag, z
+
+
+def erinnerung_fotos(kunde, anzahl):
+    token = os.environ.get("GITHUB_TOKEN")
+    repo = os.environ.get("GITHUB_REPOSITORY")
+    if not token or not repo:
+        return
+    titel = f"Neue Fotos noetig: {kunde}"
+    vorhandene = requests.get(f"https://api.github.com/repos/{repo}/issues",
+                              params={"state": "open", "per_page": 100},
+                              headers={"Authorization": f"Bearer {token}"}, timeout=30)
+    if vorhandene.ok and any(i["title"] == titel for i in vorhandene.json()):
+        return
+    requests.post(f"https://api.github.com/repos/{repo}/issues",
+                  headers={"Authorization": f"Bearer {token}"},
+                  json={"title": titel,
+                        "body": (f"Alle {anzahl} Fotos im Drive-Ordner von **{kunde}** waren "
+                                 f"schon einmal in einer Story. Ab jetzt wiederholen sie sich.\n\n"
+                                 f"Einfach neue Bilder in den Drive-Ordner legen - der Automat "
+                                 f"nimmt sie beim naechsten Lauf von allein.")},
+                  timeout=30)
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--kunde", required=True)
@@ -140,14 +229,19 @@ def main():
 
     # Stories: Design-Stories und reine Foto-Stories kommen aus demselben Plan.
     typen = ("story", "foto") if a.typ == "story" else ("feed",)
-    plan = lade_plan(a.kunde)
+    plan = lade_plan(a.kunde) if os.path.exists(plan_pfad(a.kunde)) else []
     eintrag = waehle(plan, typen, tag)
+    zustand = None
+
     if eintrag is None:
-        rest = len([e for e in plan if not e.get("erledigt")])
-        print(f"{a.kunde}/{a.typ}: heute nichts faellig. Noch offen im Plan: {rest}")
-        if rest <= RESTWARNUNG:
-            erinnerung(a.kunde, rest)
-        return
+        if a.typ == "feed":
+            # Beitraege haben Text und Hashtags - die kommen nur aus dem Plan.
+            print(f"{a.kunde}/feed: heute kein Beitrag faellig.")
+            return
+        # Kein Plan-Eintrag faellig: Story automatisch aus Drive bauen.
+        eintrag, zustand = automatik(a.kunde, marke, tag)
+        if eintrag is None:
+            return
 
     ordner = os.path.join(BASIS, "veroeffentlicht", a.kunde)
     os.makedirs(ordner, exist_ok=True)
@@ -173,16 +267,25 @@ def main():
         mid = post.story(account, token, adresse)
     print("veroeffentlicht:", mid)
 
-    eintrag["erledigt"] = dt.datetime.now(ZEITZONE).isoformat(timespec="minutes")
-    eintrag["instagram_id"] = mid
-    speichere_plan(a.kunde, plan)
-    committe([os.path.relpath(plan_pfad(a.kunde), BASIS)],
-             f"{a.kunde}: {eintrag['datum']} erledigt")
-
-    rest = len([e for e in plan if not e.get("erledigt")])
-    print("noch offen im Plan:", rest)
-    if rest <= RESTWARNUNG:
-        erinnerung(a.kunde, rest)
+    if zustand is None:
+        # Eintrag kam aus dem Plan -> dort als erledigt markieren
+        eintrag["erledigt"] = dt.datetime.now(ZEITZONE).isoformat(timespec="minutes")
+        eintrag["instagram_id"] = mid
+        speichere_plan(a.kunde, plan)
+        committe([os.path.relpath(plan_pfad(a.kunde), BASIS)],
+                 f"{a.kunde}: {eintrag['datum']} erledigt")
+        rest = len([e for e in plan if not e.get("erledigt")])
+        print("noch offen im Plan:", rest)
+        if rest <= RESTWARNUNG:
+            erinnerung(a.kunde, rest)
+    else:
+        # Automatiklauf -> verbrauchtes Foto und Textzaehler merken
+        zustand["fotos"].append(zustand.pop("_foto_id"))
+        zustand["zaehler"] += 1
+        zustand["zuletzt"] = f"{tag.isoformat()} {eintrag.get('quelle', '')}"
+        speichere_zustand(a.kunde, zustand)
+        committe([os.path.relpath(zustand_pfad(a.kunde), BASIS)],
+                 f"{a.kunde}: Foto {eintrag.get('quelle', '')} verwendet")
 
 
 if __name__ == "__main__":
