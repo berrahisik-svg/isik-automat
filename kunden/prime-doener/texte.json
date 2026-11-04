@@ -1,0 +1,15 @@
+{
+  "anteil_reine_fotos": 2,
+  "texte": [
+    {"headline": ["STEAK", "VOM SPIESS"], "script": "100 % Beef"},
+    {"headline": ["DÖNER", "& PIZZA"]},
+    {"headline": ["TÄGLICH", "FRISCH"]},
+    {"headline": ["KOMM", "VORBEI"]},
+    {"headline": ["ZUM", "MITNEHMEN"]},
+    {"headline": ["JETZT", "GEÖFFNET"]},
+    {"headline": ["FRISCH", "GEMACHT"]},
+    {"headline": ["DÜRÜM", "GEFÄLLIG?"]},
+    {"headline": ["100 %", "BEEF"], "script": "kein Mischfleisch"},
+    {"headline": ["DEIN", "DÖNER"]}
+  ]
+}
