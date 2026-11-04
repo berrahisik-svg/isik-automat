@@ -30,6 +30,21 @@ jobs:
           print('Instagram verbunden:', post.pruefe_token(a, t))
           "
 
+      - name: Instagram PrimeDoener
+        if: always()
+        env:
+          IG_TOKEN_PRIMEDOENER: ${{ secrets.IG_TOKEN_PRIMEDOENER }}
+          IG_ACCOUNT_PRIMEDOENER: ${{ secrets.IG_ACCOUNT_PRIMEDOENER }}
+        run: |
+          python -c "
+          import os, sys; sys.path.insert(0, 'skripte')
+          import post
+          t = os.environ.get('IG_TOKEN_PRIMEDOENER'); a = os.environ.get('IG_ACCOUNT_PRIMEDOENER')
+          if not t or not a:
+              print('PrimeDoener: Secrets fehlen'); raise SystemExit(1)
+          print('Instagram verbunden:', post.pruefe_token(a, t))
+          "
+
       - name: Google Drive
         if: always()
         env:
