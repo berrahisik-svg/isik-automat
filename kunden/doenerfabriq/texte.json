@@ -1,0 +1,15 @@
+{
+  "anteil_reine_fotos": 2,
+  "texte": [
+    {"headline": ["HAUPTSTR. 16"], "script": "76571 Gaggenau", "head_groesse": 151, "head_x": "mitte", "head_y": 1194, "script_x": 329, "script_y": 1322, "pin": 1054},
+    {"headline": ["FRISCH", "VOM SPIESS"]},
+    {"headline": ["TÄGLICH", "FRISCH"]},
+    {"headline": ["KOMM", "VORBEI"]},
+    {"headline": ["ZUM", "MITNEHMEN"]},
+    {"headline": ["JETZT", "GEÖFFNET"]},
+    {"headline": ["DÖNER", "& DÜRÜM"]},
+    {"headline": ["FRISCH", "GEMACHT"]},
+    {"headline": ["GAGGENAU"], "script": "Hauptstr. 16"},
+    {"headline": ["DEIN", "DÖNER"]}
+  ]
+}
