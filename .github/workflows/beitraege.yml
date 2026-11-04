@@ -1,0 +1,32 @@
+name: Beitraege posten
+
+on:
+  schedule:
+    - cron: "25 16 * * *"        # taeglich 17:25 Winterzeit / 18:25 Sommerzeit
+  workflow_dispatch:
+
+concurrency: posten
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  feed:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        kunde: [prime-doener]     # DönerFabriq steht hier bewusst NICHT drin:
+                                  # dort werden nur Stories gepostet.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python skripte/run.py --kunde ${{ matrix.kunde }} --typ feed
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IG_TOKEN_PRIMEDOENER: ${{ secrets.IG_TOKEN_PRIMEDOENER }}
+          IG_ACCOUNT_PRIMEDOENER: ${{ secrets.IG_ACCOUNT_PRIMEDOENER }}

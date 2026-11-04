@@ -1,0 +1,33 @@
+name: Stories posten
+
+on:
+  schedule:
+    - cron: "40 10 * * *"        # taeglich 11:40 Winterzeit / 12:40 Sommerzeit
+  workflow_dispatch:             # Knopf zum Selberstarten
+
+concurrency: posten               # nie zwei Laeufe gleichzeitig
+
+permissions:
+  contents: write                 # darf das gepostete Bild ins Repo schreiben
+  issues: write                   # darf die Nachschub-Erinnerung anlegen
+
+jobs:
+  story:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      matrix:
+        kunde: [prime-doener]     # DönerFabriq hier eintragen, sobald die Zugaenge stehen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python skripte/run.py --kunde ${{ matrix.kunde }} --typ story
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IG_TOKEN_PRIMEDOENER: ${{ secrets.IG_TOKEN_PRIMEDOENER }}
+          IG_ACCOUNT_PRIMEDOENER: ${{ secrets.IG_ACCOUNT_PRIMEDOENER }}
+          IG_TOKEN_DOENERFABRIQ: ${{ secrets.IG_TOKEN_DOENERFABRIQ }}
+          IG_ACCOUNT_DOENERFABRIQ: ${{ secrets.IG_ACCOUNT_DOENERFABRIQ }}
