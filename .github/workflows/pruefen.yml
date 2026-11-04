@@ -1,0 +1,49 @@
+name: Zugang pruefen
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pruefen:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: DoenerFabriq
+        env:
+          IG_TOKEN_DOENERFABRIQ: ${{ secrets.IG_TOKEN_DOENERFABRIQ }}
+          IG_ACCOUNT_DOENERFABRIQ: ${{ secrets.IG_ACCOUNT_DOENERFABRIQ }}
+        run: |
+          python -c "
+          import os, sys; sys.path.insert(0, 'skripte')
+          import post
+          t = os.environ.get('IG_TOKEN_DOENERFABRIQ'); a = os.environ.get('IG_ACCOUNT_DOENERFABRIQ')
+          if not t or not a:
+              print('DoenerFabriq: Secrets fehlen'); raise SystemExit(1)
+          print('DoenerFabriq verbunden:', post.pruefe_token(a, t))
+          "
+      - name: PrimeDoener
+        if: always()
+        env:
+          IG_TOKEN_PRIMEDOENER: ${{ secrets.IG_TOKEN_PRIMEDOENER }}
+          IG_ACCOUNT_PRIMEDOENER: ${{ secrets.IG_ACCOUNT_PRIMEDOENER }}
+        run: |
+          python -c "
+          import os, sys; sys.path.insert(0, 'skripte')
+          import post
+          t = os.environ.get('IG_TOKEN_PRIMEDOENER'); a = os.environ.get('IG_ACCOUNT_PRIMEDOENER')
+          if not t or not a:
+              print('PrimeDoener: noch keine Secrets hinterlegt - uebersprungen'); raise SystemExit(0)
+          print('PrimeDoener verbunden:', post.pruefe_token(a, t))
+          "
+      - name: Testbild rendern
+        if: always()
+        run: python skripte/run.py --kunde prime-doener --typ story --trocken --datum 2026-11-05
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: testbild
+          path: veroeffentlicht/**
