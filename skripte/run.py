@@ -25,7 +25,10 @@ import zoneinfo
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import render
+import render_doenerfabriq
 import post
+
+RENDERER = {"primedoener": render, "doenerfabriq": render_doenerfabriq}
 
 BASIS = render.BASIS
 ZEITZONE = zoneinfo.ZoneInfo("Europe/Berlin")
@@ -150,7 +153,7 @@ def main():
     os.makedirs(ordner, exist_ok=True)
     name = f"{tag.isoformat()}-{eintrag['typ']}.jpg"
     ziel = os.path.join(ordner, name)
-    render.baue(a.kunde, eintrag, ziel)
+    RENDERER[marke.get("stil", "primedoener")].baue(a.kunde, eintrag, ziel)
     print("gerendert:", ziel)
 
     if a.trocken:
