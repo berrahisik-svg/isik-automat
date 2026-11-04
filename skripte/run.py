@@ -223,6 +223,10 @@ def main():
     tag = dt.date.fromisoformat(a.datum) if a.datum else heute()
 
     marke = render.lade_marke(a.kunde)
+    if not a.trocken and not (os.environ.get(marke["secret_token"])
+                              and os.environ.get(marke["secret_account_id"])):
+        print(f"{a.kunde}: Instagram-Zugangsdaten fehlen - uebersprungen.")
+        return
     if a.typ == "feed" and not marke.get("postet_feed", False):
         print(f"{a.kunde}: Feed-Posts sind fuer diesen Kunden abgeschaltet - nichts zu tun.")
         return
