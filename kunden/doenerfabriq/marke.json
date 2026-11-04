@@ -1,14 +1,18 @@
 {
   "name": "DönerFabriq",
-  "instagram_handle": "doenerfabriq",
+  "instagram_handle": "doenerfabrik_official",
   "logo": "logo.png",
-  "farbe_rot": [229, 38, 42],
-  "schrift_headline": "Akira_Expanded_Demo.otf",
-  "schrift_script": "Abuget.ttf",
+  "farbe_gold": [
+    206,
+    185,
+    97
+  ],
+  "schrift_headline": "BebasNeue-Regular.ttf",
+  "schrift_script": "Autography.otf",
   "schrift_fliess": "Montserrat.ttf",
-  "fusszeile": "NOCH EINTRAGEN",
+  "adresse": "HAUPTSTR. 16",
+  "ort": "76571 Gaggenau",
   "postet_feed": false,
-  "secret_token": "IG_TOKEN_DOENERFABRIQ",
-  "secret_account_id": "IG_ACCOUNT_DOENERFABRIQ",
-  "hinweis": "Logo, Hausfarbe, Schriften und Fusszeile sind noch Platzhalter von Prime Döner. Vor dem ersten Lauf ersetzen. postet_feed steht auf false: fuer DönerFabriq werden nur Stories gepostet, Beitraege macht Berrah selbst."
+  "stil": "doenerfabriq",
+  "hinweis": "Eigener Stil, 1:1 aus den PSDs 13/14/15 uebernommen: Bebas Neue 236 px weiss, nach rechts steigend (Scherung -0.0799), linker Rand 100, Zeilenschritt 206, Logo 212 px mittig bei y=215, Handschrift Autography 74 px, Akzent in Gold #FFD03D, Verlaeufe oben und unten als PNG aus der PSD. postet_feed=false: nur Stories."
 }
