@@ -1,0 +1,14 @@
+{
+  "name": "DönerFabriq",
+  "instagram_handle": "doenerfabriq",
+  "logo": "logo.png",
+  "farbe_rot": [229, 38, 42],
+  "schrift_headline": "Akira_Expanded_Demo.otf",
+  "schrift_script": "Abuget.ttf",
+  "schrift_fliess": "Montserrat.ttf",
+  "fusszeile": "NOCH EINTRAGEN",
+  "postet_feed": false,
+  "secret_token": "IG_TOKEN_DOENERFABRIQ",
+  "secret_account_id": "IG_ACCOUNT_DOENERFABRIQ",
+  "hinweis": "Logo, Hausfarbe, Schriften und Fusszeile sind noch Platzhalter von Prime Döner. Vor dem ersten Lauf ersetzen. postet_feed steht auf false: fuer DönerFabriq werden nur Stories gepostet, Beitraege macht Berrah selbst."
+}
