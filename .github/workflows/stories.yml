@@ -16,8 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 1
+      fail-fast: false
       matrix:
-        kunde: [prime-doener]     # DönerFabriq hier eintragen, sobald die Zugaenge stehen
+        kunde: [doenerfabriq, prime-doener]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,6 +28,7 @@ jobs:
       - run: python skripte/run.py --kunde ${{ matrix.kunde }} --typ story
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOOGLE_DIENSTKONTO: ${{ secrets.GOOGLE_DIENSTKONTO }}
           IG_TOKEN_PRIMEDOENER: ${{ secrets.IG_TOKEN_PRIMEDOENER }}
           IG_ACCOUNT_PRIMEDOENER: ${{ secrets.IG_ACCOUNT_PRIMEDOENER }}
           IG_TOKEN_DOENERFABRIQ: ${{ secrets.IG_TOKEN_DOENERFABRIQ }}
