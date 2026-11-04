@@ -1,0 +1,156 @@
+[
+  {
+    "datum": "2026-11-05",
+    "typ": "story",
+    "foto": "duerum_sossen.jpg",
+    "headline": ["ALLES DRAUF,", "WAS DU WILLST"],
+    "script": "deine Wahl",
+    "bias_y": 0.16,
+    "scrim": 1.25
+  },
+  {
+    "datum": "2026-11-06",
+    "typ": "foto",
+    "foto": "duerum_offen.jpg",
+    "bias_y": 0.22
+  },
+  {
+    "datum": "2026-11-07",
+    "typ": "story",
+    "foto": "laden_schild.jpg",
+    "headline": ["TÄGLICH", "FÜR EUCH DA"],
+    "script": "bis 21 Uhr",
+    "bias_y": 0.30,
+    "scrim": 1.2
+  },
+  {
+    "datum": "2026-11-08",
+    "typ": "story",
+    "foto": "duerum_offen.jpg",
+    "headline": ["STEAK", "VOM SPIESS"],
+    "script": "100 % Beef",
+    "bias_y": 0.22,
+    "scrim": 1.2
+  },
+  {
+    "datum": "2026-11-08",
+    "typ": "feed",
+    "foto": "duerum_gerollt.jpg",
+    "headline": ["DÜRÜM", "FRISCH GEROLLT"],
+    "script": "alles drin",
+    "bias_y": 0.30,
+    "scrim": 1.2,
+    "caption": "Dürüm mit allem. 🌯\n\nSteak vom Spieß, frischer Salat, Granatapfel und unsere Soßen.\n\n📍 Hauptstraße 71, 77839 Lichtenau\n📞 07227 / 99 400 22\n\n#primedoener #dürüm #lichtenau #steakdöner #döner #100beef #achern #bühl #rastatt #ortenau"
+  },
+  {
+    "datum": "2026-11-09",
+    "typ": "story",
+    "foto": "laden_abend.jpg",
+    "headline": ["HUNGER?"],
+    "script": "wir sind da",
+    "bias_y": 0.42,
+    "scrim": 1.3
+  },
+  {
+    "datum": "2026-11-10",
+    "typ": "foto",
+    "foto": "duerum_gerollt.jpg",
+    "bias_y": 0.30
+  },
+  {
+    "datum": "2026-11-11",
+    "typ": "story",
+    "foto": "laden_eingang.jpg",
+    "headline": ["KOMM", "VORBEI"],
+    "script": "jetzt frisch",
+    "bias_y": 0.33,
+    "scrim": 1.3
+  },
+  {
+    "datum": "2026-11-11",
+    "typ": "feed",
+    "foto": "duerum_sossen.jpg",
+    "headline": ["SOSSEN", "NACH WAHL"],
+    "script": "scharf?",
+    "bias_y": 0.16,
+    "scrim": 1.2,
+    "caption": "Scharf, Kräuter, Cocktail — oder alles zusammen. Du sagst, wir machen.\n\n📍 Hauptstraße 71, 77839 Lichtenau\n📞 07227 / 99 400 22\n\n#primedoener #döner #lichtenau #steakdöner #sossen #achern #bühl #rastatt #ortenau"
+  },
+  {
+    "datum": "2026-11-12",
+    "typ": "story",
+    "foto": "duerum_sossen.jpg",
+    "headline": ["FRISCH", "GEMACHT"],
+    "script": "jeden Tag",
+    "bias_y": 0.16,
+    "scrim": 1.25
+  },
+  {
+    "datum": "2026-11-13",
+    "typ": "foto",
+    "foto": "laden_eingang.jpg",
+    "bias_y": 0.33
+  },
+  {
+    "datum": "2026-11-14",
+    "typ": "story",
+    "foto": "laden_abend.jpg",
+    "headline": ["WIR HABEN", "GEÖFFNET"],
+    "script": "bis 21 Uhr",
+    "bias_y": 0.42,
+    "scrim": 1.3
+  },
+  {
+    "datum": "2026-11-14",
+    "typ": "feed",
+    "foto": "laden_eingang.jpg",
+    "headline": ["NEU IN", "LICHTENAU"],
+    "script": "schon probiert?",
+    "bias_y": 0.33,
+    "scrim": 1.3,
+    "caption": "Prime Döner in der Hauptstraße 71. Steak vom Spieß, 100 % Beef, alles frisch.\n\nSchon dagewesen? Sag uns, wie's war. 👇\n\n📍 Hauptstraße 71, 77839 Lichtenau\n📞 07227 / 99 400 22\n\n#primedoener #lichtenau #döner #steakdöner #neueröffnung #achern #bühl #rastatt #ortenau"
+  },
+  {
+    "datum": "2026-11-15",
+    "typ": "story",
+    "foto": "duerum_gerollt.jpg",
+    "headline": ["DÜRÜM", "GEFÄLLIG?"],
+    "script": "frisch gerollt",
+    "bias_y": 0.30,
+    "scrim": 1.2
+  },
+  {
+    "datum": "2026-11-16",
+    "typ": "foto",
+    "foto": "laden_schild.jpg",
+    "bias_y": 0.30
+  },
+  {
+    "datum": "2026-11-17",
+    "typ": "story",
+    "foto": "duerum_offen.jpg",
+    "headline": ["MITTAG", "GERETTET"],
+    "script": "in 5 Minuten",
+    "bias_y": 0.22,
+    "scrim": 1.2
+  },
+  {
+    "datum": "2026-11-17",
+    "typ": "feed",
+    "foto": "duerum_offen.jpg",
+    "headline": ["STEAK", "VOM SPIESS"],
+    "script": "100 % Beef",
+    "bias_y": 0.22,
+    "scrim": 1.25,
+    "caption": "Kein Mischfleisch, kein Kompromiss: 100 % Beef, frisch vom Spieß geschnitten.\n\n📍 Hauptstraße 71, 77839 Lichtenau\n📞 07227 / 99 400 22\n\n#primedoener #steakdöner #100beef #döner #lichtenau #achern #bühl #rastatt #ortenau"
+  },
+  {
+    "datum": "2026-11-18",
+    "typ": "story",
+    "foto": "laden_eingang.jpg",
+    "headline": ["BIS", "GLEICH"],
+    "script": "wir sind da",
+    "bias_y": 0.33,
+    "scrim": 1.3
+  }
+]

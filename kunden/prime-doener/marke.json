@@ -1,0 +1,13 @@
+{
+  "name": "Prime Döner",
+  "instagram_handle": "primedoener",
+  "logo": "logo.png",
+  "farbe_rot": [229, 38, 42],
+  "schrift_headline": "Akira_Expanded_Demo.otf",
+  "schrift_script": "Abuget.ttf",
+  "schrift_fliess": "Montserrat.ttf",
+  "fusszeile": "HAUPTSTR. 71  ·  77839 LICHTENAU  ·  07227 / 99 400 22",
+  "postet_feed": true,
+  "secret_token": "IG_TOKEN_PRIMEDOENER",
+  "secret_account_id": "IG_ACCOUNT_PRIMEDOENER"
+}
