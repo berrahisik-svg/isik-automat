@@ -132,7 +132,9 @@
     "datum": "2026-11-13",
     "typ": "foto",
     "foto": "laden_eingang.jpg",
-    "bias_y": 0.33
+    "bias_y": 0.33,
+    "erledigt": "2026-11-13T19:03+01:00",
+    "instagram_id": "18136004866690608"
   },
   {
     "datum": "2026-11-14",
