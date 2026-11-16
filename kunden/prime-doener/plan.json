@@ -183,7 +183,9 @@
     "datum": "2026-11-16",
     "typ": "foto",
     "foto": "laden_schild.jpg",
-    "bias_y": 0.3
+    "bias_y": 0.3,
+    "erledigt": "2026-11-16T21:40+01:00",
+    "instagram_id": "18132018154871889"
   },
   {
     "datum": "2026-11-17",
