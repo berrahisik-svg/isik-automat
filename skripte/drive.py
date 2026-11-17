@@ -55,7 +55,8 @@ def fotos(ordner_ids, token=None):
         seite = None
         while True:
             p = {"q": f"'{oid}' in parents and trashed = false",
-                 "fields": "files(id,name,mimeType,modifiedTime,size),nextPageToken",
+                 "fields": ("files(id,name,mimeType,modifiedTime,size,thumbnailLink),"
+                            "nextPageToken"),
                  "pageSize": 1000, "supportsAllDrives": "true",
                  "includeItemsFromAllDrives": "true"}
             if seite:
@@ -72,6 +73,27 @@ def fotos(ordner_ids, token=None):
     # Neueste zuerst: was frisch hochgeladen wird, geht als Naechstes raus.
     gefunden.sort(key=lambda f: f.get("modifiedTime", ""), reverse=True)
     return gefunden
+
+
+def vorschau(datei, token=None, breite=640):
+    """Kleine Vorschau eines Bildes - nur ein paar KB, zum Vergleichen.
+
+    Nutzt den thumbnailLink von Drive; wenn der fehlt oder klemmt, kommt
+    None zurueck und der Aufrufer macht ohne Vergleich weiter.
+    """
+    link = datei.get("thumbnailLink")
+    if not link:
+        return None
+    if "=s" in link:
+        link = link.rsplit("=s", 1)[0] + f"=s{breite}"
+    token = token or _token()
+    try:
+        r = requests.get(link, headers={"Authorization": f"Bearer {token}"}, timeout=30)
+        r.raise_for_status()
+        return r.content
+    except Exception as e:
+        print("Vorschau nicht abrufbar:", datei.get("name"), e)
+        return None
 
 
 def hole(datei_id, ziel, token=None):

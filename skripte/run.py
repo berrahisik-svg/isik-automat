@@ -173,7 +173,25 @@ def automatik(kunde, marke, tag, als_feed=False):
         z["fotos"] = []
         offen = alle
 
+    # Serienaufnahmen: aus 2-3 fast gleichen Bildern nur das schaerfste nehmen,
+    # die anderen gelten als erledigt und kommen nie dran.
+    import auswahl
+    kandidaten = []
+    for f in offen[:6]:
+        roh = drive.vorschau(f, token)
+        if roh:
+            kandidaten.append((f["id"], roh))
+    verbraucht = []
     foto = offen[0]
+    if len(kandidaten) > 1:
+        best_id, serie_ids = auswahl.serie(kandidaten)
+        if len(serie_ids) > 1:
+            nach_id = {f["id"]: f for f in offen}
+            foto = nach_id.get(best_id, offen[0])
+            verbraucht = [i for i in serie_ids if i != foto["id"]]
+            namen = ", ".join(nach_id[i]["name"] for i in serie_ids if i in nach_id)
+            print(f"Serie erkannt ({namen}) - genommen: {foto['name']}")
+
     ziel = os.path.join(BASIS, "kunden", kunde, "fotos", "_automatik.jpg")
     os.makedirs(os.path.dirname(ziel), exist_ok=True)
     drive.hole(foto["id"], ziel, token)
@@ -186,6 +204,7 @@ def automatik(kunde, marke, tag, als_feed=False):
                    "caption": marke.get("caption_ohne_text", "")}
         z["_kein_zaehler"] = True
         z["_foto_id"] = foto["id"]
+        z["_serie"] = verbraucht
         return eintrag, z
 
     takt = pool.get("anteil_reine_fotos", 3)
@@ -198,6 +217,7 @@ def automatik(kunde, marke, tag, als_feed=False):
     if not reines_foto:
         eintrag.update(texte[nr % len(texte)])
     z["_foto_id"] = foto["id"]
+    z["_serie"] = verbraucht
     return eintrag, z
 
 
@@ -303,6 +323,7 @@ def main():
     else:
         # Automatiklauf -> verbrauchtes Foto und Textzaehler merken
         zustand["fotos"].append(zustand.pop("_foto_id"))
+        zustand["fotos"].extend(zustand.pop("_serie", []))
         if not zustand.pop("_kein_zaehler", False):
             zustand["zaehler"] += 1          # Textrotation nur bei Stories weiterdrehen
         zustand["zuletzt"] = f"{tag.isoformat()} {eintrag.get('quelle', '')}"
