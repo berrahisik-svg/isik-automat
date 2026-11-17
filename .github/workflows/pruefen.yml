@@ -16,20 +16,6 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements.txt
 
-      - name: Instagram DoenerFabriq
-        env:
-          IG_TOKEN_DOENERFABRIQ: ${{ secrets.IG_TOKEN_DOENERFABRIQ }}
-          IG_ACCOUNT_DOENERFABRIQ: ${{ secrets.IG_ACCOUNT_DOENERFABRIQ }}
-        run: |
-          python -c "
-          import os, sys; sys.path.insert(0, 'skripte')
-          import post
-          t = os.environ.get('IG_TOKEN_DOENERFABRIQ'); a = os.environ.get('IG_ACCOUNT_DOENERFABRIQ')
-          if not t or not a:
-              print('DoenerFabriq: Secrets fehlen'); raise SystemExit(1)
-          print('Instagram verbunden:', post.pruefe_token(a, t))
-          "
-
       - name: Instagram PrimeDoener
         if: always()
         env:
@@ -53,7 +39,7 @@ jobs:
           python -c "
           import json, sys; sys.path.insert(0, 'skripte')
           import drive, render
-          m = render.lade_marke('doenerfabriq')
+          m = render.lade_marke('prime-doener')
           f = drive.fotos(m['drive_ordner'])
           print('Fotos in Drive:', len(f))
           for x in f[:5]:
@@ -66,7 +52,7 @@ jobs:
         if: always()
         env:
           GOOGLE_DIENSTKONTO: ${{ secrets.GOOGLE_DIENSTKONTO }}
-        run: python skripte/run.py --kunde doenerfabriq --typ story --trocken
+        run: python skripte/run.py --kunde prime-doener --typ story --trocken
 
       - uses: actions/upload-artifact@v4
         if: always()
