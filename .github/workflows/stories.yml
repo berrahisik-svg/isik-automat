@@ -2,7 +2,7 @@ name: Stories posten
 
 on:
   schedule:
-    - cron: "40 10 * * *"        # taeglich 11:40 Winterzeit / 12:40 Sommerzeit
+    - cron: "17 9 * * *"         # 10:17 Winterzeit / 11:17 Sommerzeit - immer im Fenster 10:00-11:30
   workflow_dispatch:             # Knopf zum Selberstarten
     inputs:
       kunde:
@@ -23,7 +23,7 @@ jobs:
       max-parallel: 1
       fail-fast: false
       matrix:
-        kunde: [doenerfabriq, prime-doener]
+        kunde: [prime-doener]     # DoenerFabriq ist vorerst rausgenommen (17.11.2026)
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -37,5 +37,3 @@ jobs:
           GOOGLE_DIENSTKONTO: ${{ secrets.GOOGLE_DIENSTKONTO }}
           IG_TOKEN_PRIMEDOENER: ${{ secrets.IG_TOKEN_PRIMEDOENER }}
           IG_ACCOUNT_PRIMEDOENER: ${{ secrets.IG_ACCOUNT_PRIMEDOENER }}
-          IG_TOKEN_DOENERFABRIQ: ${{ secrets.IG_TOKEN_DOENERFABRIQ }}
-          IG_ACCOUNT_DOENERFABRIQ: ${{ secrets.IG_ACCOUNT_DOENERFABRIQ }}

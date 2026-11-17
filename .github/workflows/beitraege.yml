@@ -2,8 +2,17 @@ name: Beitraege posten
 
 on:
   schedule:
-    - cron: "25 16 * * *"        # taeglich 17:25 Winterzeit / 18:25 Sommerzeit
-  workflow_dispatch:
+    - cron: "40 13 * * *"        # 14:40 Winterzeit / 15:40 Sommerzeit - gegen 15 Uhr
+  workflow_dispatch:             # Knopf zum Selberstarten
+    inputs:
+      typ:
+        description: "feed = geplanter Beitrag mit Text | feedfoto = nur Bild, frisch aus Drive"
+        required: false
+        default: "feed"
+        type: choice
+        options:
+          - feed
+          - feedfoto
 
 concurrency: posten
 
@@ -25,8 +34,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
-      - run: python skripte/run.py --kunde ${{ matrix.kunde }} --typ feed
+      - run: python skripte/run.py --kunde ${{ matrix.kunde }} --typ ${{ inputs.typ || 'feed' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOOGLE_DIENSTKONTO: ${{ secrets.GOOGLE_DIENSTKONTO }}
           IG_TOKEN_PRIMEDOENER: ${{ secrets.IG_TOKEN_PRIMEDOENER }}
           IG_ACCOUNT_PRIMEDOENER: ${{ secrets.IG_ACCOUNT_PRIMEDOENER }}
