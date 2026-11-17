@@ -69,7 +69,8 @@ def fotos(ordner_ids, token=None):
             seite = d.get("nextPageToken")
             if not seite:
                 break
-    gefunden.sort(key=lambda f: f.get("modifiedTime", ""))
+    # Neueste zuerst: was frisch hochgeladen wird, geht als Naechstes raus.
+    gefunden.sort(key=lambda f: f.get("modifiedTime", ""), reverse=True)
     return gefunden
 
 

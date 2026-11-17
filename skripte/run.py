@@ -144,7 +144,7 @@ def speichere_zustand(kunde, z):
         f.write("\n")
 
 
-def automatik(kunde, marke, tag):
+def automatik(kunde, marke, tag, als_feed=False):
     """Baut einen Eintrag aus einem frischen Drive-Foto und dem Textpool.
 
     So muss niemand einen Plan pflegen: Fotos in den Drive-Ordner legen reicht.
@@ -178,6 +178,15 @@ def automatik(kunde, marke, tag):
     os.makedirs(os.path.dirname(ziel), exist_ok=True)
     drive.hole(foto["id"], ziel, token)
     print(f"aus Drive geholt: {foto['name']}")
+
+    if als_feed:
+        # Beitrag ohne jeden Text: nur das Bild im Feed-Format.
+        eintrag = {"datum": tag.isoformat(), "typ": "feedfoto",
+                   "foto": "_automatik.jpg", "bias_y": 0.5, "quelle": foto["name"],
+                   "caption": marke.get("caption_ohne_text", "")}
+        z["_kein_zaehler"] = True
+        z["_foto_id"] = foto["id"]
+        return eintrag, z
 
     takt = pool.get("anteil_reine_fotos", 3)
     texte = pool["texte"]
@@ -216,7 +225,8 @@ def erinnerung_fotos(kunde, anzahl):
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("--kunde", required=True)
-    p.add_argument("--typ", required=True, choices=["story", "feed"])
+    p.add_argument("--typ", required=True, choices=["story", "feed", "feedfoto"],
+                   help="feedfoto = Beitrag nur Bild, ohne Text, frisch aus Drive")
     p.add_argument("--trocken", action="store_true", help="nur rendern, nicht posten")
     p.add_argument("--datum", help="zum Testen: so tun, als waere dieser Tag (JJJJ-MM-TT)")
     a = p.parse_args()
@@ -227,25 +237,33 @@ def main():
                               and os.environ.get(marke["secret_account_id"])):
         print(f"{a.kunde}: Instagram-Zugangsdaten fehlen - uebersprungen.")
         return
-    if a.typ == "feed" and not marke.get("postet_feed", False):
+    if a.typ in ("feed", "feedfoto") and not marke.get("postet_feed", False):
         print(f"{a.kunde}: Feed-Posts sind fuer diesen Kunden abgeschaltet - nichts zu tun.")
         return
 
-    # Stories: Design-Stories und reine Foto-Stories kommen aus demselben Plan.
-    typen = ("story", "foto") if a.typ == "story" else ("feed",)
     plan = lade_plan(a.kunde) if os.path.exists(plan_pfad(a.kunde)) else []
-    eintrag = waehle(plan, typen, tag)
-    zustand = None
+    eintrag = zustand = None
 
-    if eintrag is None:
-        if a.typ == "feed":
-            # Beitraege haben Text und Hashtags - die kommen nur aus dem Plan.
-            print(f"{a.kunde}/feed: heute kein Beitrag faellig.")
+    if a.typ == "feedfoto":
+        # Beitrag nur Bild: kommt immer frisch aus Drive, nicht aus dem Plan.
+        eintrag, zustand = automatik(a.kunde, marke, tag, als_feed=True)
+    else:
+        # An einem Tag mit Beitrag kommt keine Story - so will es der Kunde.
+        if a.typ == "story" and waehle(plan, ("feed", "feedfoto"), tag) is not None:
+            print(f"{a.kunde}/story: heute ist ein Beitrag faellig - keine Story.")
             return
-        # Kein Plan-Eintrag faellig: Story automatisch aus Drive bauen.
-        eintrag, zustand = automatik(a.kunde, marke, tag)
+        # Stories: Design-Stories und reine Foto-Stories kommen aus demselben Plan.
+        typen = ("story", "foto") if a.typ == "story" else ("feed",)
+        eintrag = waehle(plan, typen, tag)
         if eintrag is None:
-            return
+            if a.typ == "feed":
+                # Geplante Beitraege haben Text und Hashtags - die kommen nur aus dem Plan.
+                print(f"{a.kunde}/feed: heute kein Beitrag faellig.")
+                return
+            # Kein Plan-Eintrag faellig: Story automatisch aus Drive bauen.
+            eintrag, zustand = automatik(a.kunde, marke, tag)
+    if eintrag is None:
+        return
 
     ordner = os.path.join(BASIS, "veroeffentlicht", a.kunde)
     os.makedirs(ordner, exist_ok=True)
@@ -265,7 +283,7 @@ def main():
     adresse = oeffentliche_adresse(relativ)
     print("Adresse:", adresse)
 
-    if eintrag["typ"] == "feed":
+    if eintrag["typ"] in ("feed", "feedfoto"):
         mid = post.feed(account, token, adresse, eintrag.get("caption", ""))
     else:
         mid = post.story(account, token, adresse)
@@ -285,7 +303,8 @@ def main():
     else:
         # Automatiklauf -> verbrauchtes Foto und Textzaehler merken
         zustand["fotos"].append(zustand.pop("_foto_id"))
-        zustand["zaehler"] += 1
+        if not zustand.pop("_kein_zaehler", False):
+            zustand["zaehler"] += 1          # Textrotation nur bei Stories weiterdrehen
         zustand["zuletzt"] = f"{tag.isoformat()} {eintrag.get('quelle', '')}"
         speichere_zustand(a.kunde, zustand)
         committe([os.path.relpath(zustand_pfad(a.kunde), BASIS)],
